@@ -25,8 +25,12 @@ public class UserService {
         this.users = users;
     }
 
-    public AppUser findByUserName(String username) {
+    public AppUser findByUsername(String username) {
         return users.findByUsername(username);
+    }
+
+    public void save(AppUser user) {
+        users.save(user);
     }
 
     public void saveUser(AppUser user) {
@@ -43,31 +47,4 @@ public class UserService {
         return users.findByConfirmationToken(confirmationToken);
     }
 
-//    public void setCategories (AppUser user, javax.servlet.http.HttpServletRequest request){
-//        ArrayList<String> interests = new ArrayList<>();
-//
-//        if (request.getParameter("business")!=null &&request.getParameter("business") .equals("business")) {
-//            interests.add("business");
-//        }
-//        if (request.getParameter("science").equals("science")) {
-//            interests.add("science");
-//        }
-//        if (request.getParameter("health").equals("health")) {
-//            interests.add("health");
-//        }
-//        if (request.getParameter("sports").equals("sports")) {
-//            interests.add("sports");
-//        }
-//        if (request.getParameter("entertainment").equals("entertainment")) {
-//            interests.add("entertainment");
-//        }
-//        if (request.getParameter("general").equals("general")) {
-//            interests.add("general");
-//        }
-//        user.setInterests(interests);
-//        users.save(user);
-//
-//            for (String interest: user.getInterests()){
-//                System.out.println(interest);
-//            }
-        }
+}

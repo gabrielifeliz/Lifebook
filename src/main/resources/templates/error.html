@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
+<head>
+    <title>Profile</title>
+    <th:block th:replace="base :: headstuff"></th:block>
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<nav th:replace="base :: navbar"></nav>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Grid -->
+    <div class="w3-row">
+        <!-- Middle Column -->
+        <div class="w3-col m7">
+
+            <div class="w3-row-padding">
+                <div class="w3-col m12">
+                    <div class="w3-card w3-round w3-white">
+                        <div class="w3-container w3-padding">
+                            <h3 class="error">Error: Page Not Found!</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Middle Column -->
+        </div>
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<th:block th:replace="base :: jslinks"></th:block>
+</body>
+</html>

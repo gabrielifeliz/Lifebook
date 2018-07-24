@@ -2,6 +2,14 @@ html,body,h1,h2,h3,h4,h5 {
     font-family: "Open Sans", sans-serif
 }
 
+.error {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
 .newsimage {
     width: 50%;
     float: left;

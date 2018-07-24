@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="www.thymeleaf.org">
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
 <head>
     <title>Registration</title>
     <th:block th:replace="base :: headstuff"></th:block>
@@ -7,33 +7,7 @@
 <body class="w3-theme-l5">
 
 <!-- Navbar -->
-<div class="w3-top">
-    <div class="w3-bar w3-theme-d2 w3-left-align w3-large">
-        <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-theme-d2" href="javascript:void(0);" onclick="openNav()"><i class="fa fa-bars"></i></a>
-        <a href="/" class="w3-bar-item w3-button w3-padding-large w3-theme-d4"><i class="fa fa-globe w3-margin-right"></i>LifeBook</a>
-        <!--<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Account Settings"><i class="fa fa-user"></i></a>-->
-        <!--<a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Messages"><i class="fa fa-envelope"></i></a>-->
-        <a href="/login" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white" title="Login"><i class="fa fa-key"></i>Login</a>
-        <div class="w3-dropdown-hover w3-hide-small w3-right">
-            <button class="w3-button w3-padding-large" title="MyAccount"><!--<img src="/w3images/avatar2.png" class="w3-circle" style="height:23px;width:23px" alt="Avatar">--><span class="w3-badge w3-right w3-small w3-green"></span></button>
-            <div class="w3-dropdown-content w3-bar-block" style="width:300px">
-                <a href="#" class="w3-bar-item w3-button">Login</a>
-                <a href="#" class="w3-bar-item w3-button">Login</a>
-                <a href="#" class="w3-bar-item w3-button">Login</a>
-                <a href="#" class="w3-bar-item w3-button">Check Settings</a>
-                <a href="#" class="w3-bar-item w3-button">Logout</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Navbar on small screens -->
-<div id="navDemo" class="w3-bar-block w3-theme-d2 w3-hide w3-hide-large w3-hide-medium w3-large">
-    <a href="#" class="w3-bar-item w3-button w3-padding-large">Login</a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large">Logout</a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large">Setting</a>
-    <a href="#" class="w3-bar-item w3-button w3-padding-large">My Profile</a>
-</div>
+<nav th:replace="base :: navbar"></nav>
 
 <!-- Page Container -->
 <div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
@@ -55,21 +29,31 @@
                 <div class="w3-card w3-round w3-white">
                     <div class="w3-container w3-padding">
                         <form th:object = ${user} th:action="@{/register}" method="post" enctype="multipart/form-data">
+
+                            <div th:if="${confirmationMessage} != null" class="success">
+                                <span th:text=${confirmationMessage}></span><br/><br/>
+                            </div>
+                            <div th:if="${errorMessage} != null" class="error">
+                                <span th:text=${errorMessage}></span>
+                                <a th:href="@{/resendconfirmation}"><p>Click here to resend confirmation</p></a><br/><br/>
+                            </div>
+
                             <input type="hidden" th:field="*{id}">
-                            <label>Full Name</label>
-                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{fullName}"><br/>
+                            <label>First Name</label>
+                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{firstName}">
+                            <span class="error" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></span><br/><br/>
+                            <label>Last Name</label>
+                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{lastName}">
+                            <span class="error" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></span><br/><br/>
                             <label>Username</label>
-                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{username}"><br/>
-                            <label>Password</label>
-                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{password}"><br/>
+                            <input type="text" class="w3-input w3-border w3-padding" th:field="*{username}">
+                            <span class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></span>
+                            <span class="error" th:if="${existingusername} != null" th:text="${existingusername}"></span><br/><br/>
                             <label>Email</label>
                             <input type="email" class="w3-input w3-border w3-padding"
-                                   placeholder="example@domain.com" th:field="*{email}"><br/>
-                            <label>Zip Code</label>
-                            <input type="text" class="w3-input w3-border w3-padding"
-                                   placeholder="20992" th:field="*{zipCode}"><br/>
-                            <label>Profile Picture</label>
-                            <input type="file" name="file" class="w3-input w3-border w3-padding"><br/>
+                                   placeholder="example@domain.com" th:field="*{email}">
+                            <span class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                            <span class="error" th:if="${existingemail} != null" th:text="${existingemail}"></span><br/><br/>
                             <fieldset>
                                 <legend>Interests:</legend>
                                 <select class="form-control" th:field="*{interests}" multiple>
@@ -78,6 +62,7 @@
                                             th:text="${interest.name}"></option>
                                 </select>
                             </fieldset>
+                            <br/><br/>
                             <button type="submit" class="w3-button w3-theme"><i class="fa fa-pencil"></i>Register</button>
                         </form>
                     </div>
@@ -91,14 +76,6 @@
     <!-- End Page Container -->
 </div>
 <br>
-
-<!-- Footer -->
-<!-- <footer class="w3-container w3-theme-d3 w3-padding-16">
-  <h5>Footer</h5>
-</footer>
-<footer class="w3-container w3-theme-d5">
-  <p>Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
-</footer> -->
 
 <th:block th:replace="base :: jslinks"></th:block>
 </body>

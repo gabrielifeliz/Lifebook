@@ -28,13 +28,22 @@ public class SSUDS implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        AppUser theUser = userRepository.findByUsername(s);
-        if (theUser == null)
-            throw new UsernameNotFoundException("Unable to find that user");
-        return new org.springframework.security.core.userdetails.User(theUser.getUsername(), theUser.getPassword(), !theUser.getSuspended(), true, true, theUser.getEnabled(), getAuthorities(theUser));
-}
+        boolean accountNonExpired = true;
+        boolean credentialsNonExpired = true;
+        boolean accountNonLocked = true;
+
+        try {
+            AppUser theUser = userRepository.findByUsername(username);
+            if (theUser == null)
+                throw new UsernameNotFoundException("Unable to find that user");
+            return new User(theUser.getUsername(), theUser.getPassword(), theUser.isEnabled(),
+                    accountNonExpired, credentialsNonExpired, accountNonLocked, getAuthorities(theUser));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     private Collection<? extends GrantedAuthority> getAuthorities(AppUser user) {
         Set<GrantedAuthority> userAuthorities = new HashSet<>();

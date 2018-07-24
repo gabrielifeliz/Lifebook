@@ -2,11 +2,9 @@ package com.lifebook.Controllers;
 
 import com.cloudinary.utils.ObjectUtils;
 import com.lifebook.Model.AppUser;
-import com.lifebook.Model.Interest;
 import com.lifebook.Model.UserPost;
 import com.lifebook.Repositories.*;
 import com.lifebook.Service.CloudinaryConfig;
-import com.lifebook.Service.FollowingService;
 import com.lifebook.Service.NewsService;
 import com.lifebook.Service.WeatherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,23 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
     @Autowired
     AppRoleRepository roles;
-
-
-
-    @Autowired
-    FollowingService followingService;
 
     @Autowired
     UserPostRepository posts;
@@ -64,16 +52,6 @@ public class UserController {
 
             model.addAttribute("articles", newsService.personalized(authentication));
             return "index";
-
-//            AppUser sessionUser =users.findByUsername(authentication.getName());
-//            Set<AppUser> following = sessionUser.getFollowing();
-//            Set<UserPost> posts = sessionUser.getPosts();
-//            for (AppUser u: following) {
-//                posts.addAll(u.getPosts());
-//            }
-//            model.addAttribute("posts", posts);
-//            return "allposts";
-
         }
     }
 
@@ -81,34 +59,24 @@ public class UserController {
     public String sendMessage(@ModelAttribute("post") UserPost post,
                               @RequestParam("file") MultipartFile file, Authentication authentication) {
         post.setCreator(users.findByUsername(authentication.getName()));
-        if (file.isEmpty()) {
-            post.setImageUrl("/img/user.png");
-            posts.save(post);
-            Date today=new Date();
-
-           post.setDateOfPost(today.toString());
-            posts.save(post);
-           // System.out.println(postDate.toString());
-            return "redirect:/users/profile";
-        }
-        else {
+        if (!file.isEmpty()) {
             try {
                 Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
                 String uploadedName = (String) uploadResult.get("public_id");
 
                 String transformedImage = cloudc.createUrl(uploadedName);
                 post.setImageUrl(transformedImage);
-                posts.save(post);
-                Date today=new Date();
-
-                post.setDateOfPost(today.toString());
-                posts.save(post);
 
             } catch (IOException e) {
                 e.printStackTrace();
                 return "redirect:/users/profile";
             }
         }
+
+        Date today = new Date();
+
+        post.setDateOfPost(today.toString());
+        posts.save(post);
 
         return "redirect:/users/profile";
     }
@@ -129,24 +97,19 @@ public class UserController {
         model.addAttribute("weatherSixthDay",weatherService.fetchForcast(user.getZipCode(),7).getForecast().getForecastday().get(5).getDay().getCondition().getText()) ;
         model.addAttribute("weatherSeventhDay",weatherService.fetchForcast(user.getZipCode(),7).getForecast().getForecastday().get(6).getDay().getCondition().getText()) ;
 
-        AppUser sessionUser =users.findByUsername(authentication.getName());
-            Set<AppUser> following = sessionUser.getFollowing();
-            List<UserPost> posts = new ArrayList<>(sessionUser.getPosts());
-            for (AppUser u: following) {
-                posts.addAll(u.getPosts());
-            }
-          Collections.reverse(posts);
-//            ArrayList<UserPost> reversePost = new ArrayList<>();
-//            for (int i = posts.size()-1; i>=0; i--){
-//                reversePost.add(post.get(i));
-//            }
-            model.addAttribute("posts", posts.toArray());
-//        model.addAttribute("posts", posts.findAllByOrderByIdDesc());
+        Set<AppUser> following = user.getFollowing();
+        List<UserPost> posts = new ArrayList<>(user.getPosts());
+        for (AppUser u: following) {
+            posts.addAll(u.getPosts());
+        }
+        Collections.reverse(posts);
+
+        model.addAttribute("posts", posts.toArray());
         return "profile";
     }
 
     @RequestMapping("/following")
-    public String displayFolloing(Model model, Authentication authentication) {
+    public String displayFollowing(Model model, Authentication authentication) {
         AppUser sessionUser =users.findByUsername(authentication.getName());
         model.addAttribute("currentuser", sessionUser);
         Set<AppUser> following = sessionUser.getFollowing();
@@ -154,7 +117,6 @@ public class UserController {
         for (AppUser u: following) {
             posts.addAll(u.getPosts());
         }
-      //  posts.remove(sessionUser.getPosts());
         model.addAttribute("posts", posts);
         return "following";
     }
@@ -169,10 +131,11 @@ public class UserController {
         }
 
         sessionUser.getFollowing().add(detail);
-        sessionUser.setNoOfFriend(sessionUser.getFollowing().size());
+        sessionUser.setNoOfFriends(sessionUser.getFollowing().size());
         users.save(sessionUser);
         return "redirect:/users/profile";
     }
+
     @RequestMapping("/unfollow/{id}")
     public String unfollow (@PathVariable("id") long id, Authentication auth) {
 
@@ -180,31 +143,16 @@ public class UserController {
         AppUser sessionUser = users.findByUsername(auth.getName());
         detail.setMyFriend(false);
         sessionUser.getFollowing().remove(detail);
-        sessionUser.setNoOfFriend(sessionUser.getFollowing().size());
+        sessionUser.setNoOfFriends(sessionUser.getFollowing().size());
         users.save(sessionUser);
         return "redirect:/users/profile";
     }
 
-
-
-//    @RequestMapping("/following")
-//    public String followingUsers() {
-//        return "following";
-//    }
-
-    @RequestMapping("/weather")
-    public String weather() {
-        return "weather";
-    }
-
-    @RequestMapping("/news")
-    public String news() {
-        return "news";
-    }
-
     @RequestMapping("/findpost")
-    public String showResults(HttpServletRequest request, Model model) {
+    public String showResults(HttpServletRequest request, Model model, Authentication authentication) {
         model.addAttribute("posts", posts.findAllByContentContainingIgnoreCase(request.getParameter("query")));
+        model.addAttribute("currentuser", users.findByUsername(authentication.getName()));
+
         return "results";
     }
 }

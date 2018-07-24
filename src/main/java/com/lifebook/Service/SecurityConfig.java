@@ -32,13 +32,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/", "/register", "/error").permitAll()
-                .antMatchers("/confirm").permitAll()
+                .antMatchers("/", "/register", "/confirm", "/resendconfirmation", "/error").permitAll()
                 .antMatchers("/css/**", "/js/**","/img/**").permitAll()
-//                .antMatchers("/").hasAuthority("SUSPENDED")
                 .antMatchers("/users/**").hasAnyAuthority("USER", "ADMIN")
-                .antMatchers("/h2/**", "/admin/**").hasAnyAuthority("USER", "ADMIN")
-
+                .antMatchers("/h2/**", "/admin/**").hasAuthority("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin().loginPage("/login").defaultSuccessUrl("/users/", true).permitAll()
