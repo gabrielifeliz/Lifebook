@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
+<head>
+    <title>Registration</title>
+    <th:block th:replace="base :: headstuff"></th:block>
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<nav th:replace="base :: navbar"></nav>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Grid -->
+    <div class="w3-row">
+    </div>
+
+    <!-- Middle Column -->
+    <div class="w3-col m7">
+
+        <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+            <h1 class="w3-center">Set Password</h1><br>
+            <hr class="w3-clear">
+            <div class="w3-row-padding" style="margin:0 -16px">
+            </div>
+        </div>
+        <div class="w3-row-padding">
+            <div class="w3-col m12">
+                <div class="w3-card w3-round w3-white">
+                    <div class="w3-container w3-padding">
+
+                        <div th:if="${successPasswordMessage}" class="success" th:text=${successPasswordMessage}></div>
+
+                        <div th:if="${successMessage}" class="success" th:text=${successMessage}></div>
+
+                        <div th:if="${errorMessage}" class="error" th:text=${errorMessage}></div>
+
+                        <div th:if="${invalidToken}" class="error" th:text=${invalidToken}></div>
+
+                        <div th:if="${invalidToken}" class="error">
+                            <p>Check your email again</p>
+                        </div>
+
+                        <br/><br/>
+
+                        <th:block th:if="!${successMessage}">
+                            <form th:if="!${invalidToken}" th:action="@{/confirm}"
+                                  method="post" enctype="multipart/form-data">
+
+                                <input type="hidden" name="token" th:value=${confirmationToken}  >
+
+                                <label>Password</label>
+                                <input type="text" class="w3-input w3-border w3-padding"
+                                       name="password" id="password" placeholder="Please provide a valid and strong password" required><br/><br/>
+                                <label>Upload Profile Picture</label>
+                                <input type="file" name="file" class="w3-input w3-border w3-padding"><br/><br/>
+                                <label>Zip Code</label>
+                                <input type="text" name="zipcode" id="zipcode" class="w3-input w3-border w3-padding"
+                                       placeholder="Please provide a valid zip code (i.e. 20992)"><br/><br/>
+                                <button type="submit" class="w3-button w3-theme"><i class="fa fa-pencil"></i>Save</button>
+
+                            </form>
+                        </th:block>
+                        <a th:if="${successMessage}" th:href="@{/login}">
+                            <button type="submit" class="w3-button w3-theme">
+                                <i class="fa fa-pencil"></i>
+                                Go to Login Page
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<th:block th:replace="base :: jslinks"></th:block>
+</body>
+</html>

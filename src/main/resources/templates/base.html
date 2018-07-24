@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="www.thymeleaf.org">
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
 <head>
     <th:block th:fragment="headstuff">
         <meta charset="UTF-8">
@@ -8,14 +8,69 @@
         <link rel="stylesheet" href="https://www.w3schools.com/lib/w3-theme-blue-grey.css">
         <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Open+Sans'>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
         <link href="/css/style.css" rel="stylesheet" />
     </th:block>
     <title>Base</title>
 </head>
 <body>
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary" th:fragment="navbar">
+    <a class="navbar-brand" href="/"><i class="fa fa-globe w3-margin-right"></i>LifeBook</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item active" sec:authorize="isAuthenticated()">
+                <a class="nav-link" href="/users/">
+                    <i class="fa fa-home w3-margin-right"></i>Main Page
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="isAuthenticated()">
+                <a class="nav-link" href="/users/profile">
+                    <i class="fa fa-user w3-margin-right"></i>Profile
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="isAuthenticated()">
+                <a class="nav-link" href="/logout">
+                    <i class="fa fa-window-close-o w3-margin-right"></i>Logout
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/register">
+                    <i class="fa fa-pencil-square-o w3-margin-right"></i>Register
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="!isAuthenticated()">
+                <a class="nav-link" href="/login">
+                    <i class="fa fa-key w3-margin-right"></i>Login
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="hasAuthority('ADMIN')">
+                <a class="nav-link" href="/admin/displayusers">
+                    <i class="fa fa-address-card w3-margin-right"></i>Users
+                </a>
+            </li>
+            <li class="nav-item active" sec:authorize="hasAuthority('ADMIN')">
+                <a class="nav-link" href="/admin/allmessages">
+                    <i class="fa fa-envelope w3-margin-right"></i>Messages
+                </a>
+            </li>
+        </ul>
+        <form class="form-inline my-2 my-lg-0" th:action="@{/users/findpost}" sec:authorize="isAuthenticated()">
+            <input class="form-control mr-sm-1" type="text" name="query" placeholder="Search for a post here..." aria-label="Search">
+            <button class="btn btn-primary my-2 my-sm-0" type="submit"><i class="fa fa-search"></i></button>
+        </form>
+    </div>
+</nav>
+
 <th:block th:fragment="jslinks">
     <script src="/js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </th:block>
 </body>
 </html>

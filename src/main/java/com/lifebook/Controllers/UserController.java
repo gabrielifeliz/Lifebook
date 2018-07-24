@@ -31,8 +31,6 @@ public class UserController {
     @Autowired
     AppRoleRepository roles;
 
-
-
     @Autowired
     FollowingService followingService;
 
@@ -64,16 +62,6 @@ public class UserController {
 
             model.addAttribute("articles", newsService.personalized(authentication));
             return "index";
-
-//            AppUser sessionUser =users.findByUsername(authentication.getName());
-//            Set<AppUser> following = sessionUser.getFollowing();
-//            Set<UserPost> posts = sessionUser.getPosts();
-//            for (AppUser u: following) {
-//                posts.addAll(u.getPosts());
-//            }
-//            model.addAttribute("posts", posts);
-//            return "allposts";
-
         }
     }
 
@@ -81,34 +69,24 @@ public class UserController {
     public String sendMessage(@ModelAttribute("post") UserPost post,
                               @RequestParam("file") MultipartFile file, Authentication authentication) {
         post.setCreator(users.findByUsername(authentication.getName()));
-        if (file.isEmpty()) {
-            post.setImageUrl("/img/user.png");
-            posts.save(post);
-            Date today=new Date();
-
-           post.setDateOfPost(today.toString());
-            posts.save(post);
-           // System.out.println(postDate.toString());
-            return "redirect:/users/profile";
-        }
-        else {
+        if (!file.isEmpty()) {
             try {
                 Map uploadResult = cloudc.upload(file.getBytes(), ObjectUtils.asMap("resourcetype", "auto"));
                 String uploadedName = (String) uploadResult.get("public_id");
 
                 String transformedImage = cloudc.createUrl(uploadedName);
                 post.setImageUrl(transformedImage);
-                posts.save(post);
-                Date today=new Date();
-
-                post.setDateOfPost(today.toString());
-                posts.save(post);
 
             } catch (IOException e) {
                 e.printStackTrace();
                 return "redirect:/users/profile";
             }
         }
+
+        Date today = new Date();
+
+        post.setDateOfPost(today.toString());
+        posts.save(post);
 
         return "redirect:/users/profile";
     }
@@ -136,12 +114,8 @@ public class UserController {
                 posts.addAll(u.getPosts());
             }
           Collections.reverse(posts);
-//            ArrayList<UserPost> reversePost = new ArrayList<>();
-//            for (int i = posts.size()-1; i>=0; i--){
-//                reversePost.add(post.get(i));
-//            }
+
             model.addAttribute("posts", posts.toArray());
-//        model.addAttribute("posts", posts.findAllByOrderByIdDesc());
         return "profile";
     }
 
@@ -154,7 +128,6 @@ public class UserController {
         for (AppUser u: following) {
             posts.addAll(u.getPosts());
         }
-      //  posts.remove(sessionUser.getPosts());
         model.addAttribute("posts", posts);
         return "following";
     }
@@ -169,7 +142,7 @@ public class UserController {
         }
 
         sessionUser.getFollowing().add(detail);
-        sessionUser.setNoOfFriend(sessionUser.getFollowing().size());
+        sessionUser.setNoOfFriends(sessionUser.getFollowing().size());
         users.save(sessionUser);
         return "redirect:/users/profile";
     }
@@ -180,17 +153,10 @@ public class UserController {
         AppUser sessionUser = users.findByUsername(auth.getName());
         detail.setMyFriend(false);
         sessionUser.getFollowing().remove(detail);
-        sessionUser.setNoOfFriend(sessionUser.getFollowing().size());
+        sessionUser.setNoOfFriends(sessionUser.getFollowing().size());
         users.save(sessionUser);
         return "redirect:/users/profile";
     }
-
-
-
-//    @RequestMapping("/following")
-//    public String followingUsers() {
-//        return "following";
-//    }
 
     @RequestMapping("/weather")
     public String weather() {

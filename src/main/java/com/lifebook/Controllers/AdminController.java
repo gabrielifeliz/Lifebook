@@ -31,57 +31,31 @@ public class AdminController {
     }
 
 	@RequestMapping("/allmessages")
-	public String messages(Model model) {
-        model.addAttribute("posts", posts.findAllByOrderByIdDesc());
+	public String messages(Model model, Authentication authentication) {
+		model.addAttribute("posts", posts.findAllByOrderByIdDesc());
+
+		model.addAttribute("currentuser", users.findByUsername(authentication.getName()));
 		return "results";
 	}
 
     @RequestMapping("/delete/{id}")
-    public String deleteMessage (@PathVariable("id") long id, Authentication auth) {
-
-        UserPost inappropriate=posts.findById(id).get();
-        posts.delete(inappropriate);
-
-
+    public String deleteMessage (@PathVariable("id") long id) {
+        posts.deleteById(id);
         return "redirect:/allmessages";
     }
 
-	@RequestMapping("/allusers")
-	public String users() {
-
-		return "users";
-	}
-
-	@RequestMapping("/reinstate")
-    public String reinstate() {
-		return "redirect:/admin/allusers";
-	}
-
-    @RequestMapping("/suspend")
-    public String suspend() {
-        return "redirect:/admin/allusers";
-    }
 	@RequestMapping("/displayusers")
-	public String showAllUsers(Model model) {
-		model.addAttribute("users", users.findAll());
-		return "displayusers";
-	}
-	@RequestMapping("/suspend/{userId}")
-	public String suspend(@PathVariable String userId, Model model) {
-		AppUser user = users.findById(Long.parseLong(userId)).get();
-	//	user.setSuspended(true);
-		users.save(user);
+	public String showAllUsers(Model model, Authentication auth) {
+		model.addAttribute("currentUser",users.findAppUserByUsername(auth.getName()));
 		model.addAttribute("users", users.findAll());
 		return "displayusers";
 	}
 
-	@RequestMapping("/unsuspend/{userId}")
-	public String unsuspend(@PathVariable String userId, Model model) {
-		AppUser user = users.findById(Long.parseLong(userId)).get();
-	//	user.setSuspended(false);
+	@RequestMapping("/availability/{id}")
+	public String suspend(@PathVariable("id") long id, Model model) {
+		AppUser user = users.findById(id).get();
+		user.setEnabled(!user.isEnabled());
 		users.save(user);
-		model.addAttribute("users", users.findAll());
-		return "displayusers";
+		return "redirect:/admin/displayusers";
 	}
-
 }

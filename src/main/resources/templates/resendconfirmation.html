@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
+<head>
+    <title>Registration</title>
+    <th:block th:replace="base :: headstuff"></th:block>
+</head>
+<body class="w3-theme-l5">
+
+<!-- Navbar -->
+<nav th:replace="base :: navbar"></nav>
+
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Grid -->
+    <div class="w3-row">
+    </div>
+
+    <!-- Middle Column -->
+    <div class="w3-col m7">
+
+        <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+            <h1 class="w3-center">Resend Confirmation Link</h1><br>
+            <hr class="w3-clear">
+            <div class="w3-row-padding" style="margin:0 -16px">
+            </div>
+        </div>
+        <div class="w3-row-padding">
+            <div class="w3-col m12">
+                <div class="w3-card w3-round w3-white">
+                    <div class="w3-container w3-padding">
+
+                        <form th:action="@{/resendconfirmation}" method="post">
+
+                            <div th:if="${confirmationMessage} != null" class="success">
+                                <span th:text=${confirmationMessage}></span><br/><br/>
+                            </div>
+
+                            <div th:if="${errorMessage} != null" class="error">
+                                <span th:text=${errorMessage}></span><br/><br/>
+                            </div>
+
+                            <div th:if="${nonexistingemail} != null" class="error">
+                                <span th:text=${nonexistingemail}></span><br/><br/>
+                            </div>
+
+                            <label>Enter email address to resend confirmation link</label>
+                            <input type="text" class="w3-input w3-border w3-padding"
+                                   name="email" id="email" placeholder="Please provide a valid email" required><br/><br/>
+
+                            <button type="submit" class="w3-button w3-theme"><i class="fa fa-pencil"></i>Save</button>
+
+                        </form>
+                        <br/><br/>
+                        <a th:if="${successMessage}" th:href="@{/login}">
+                            <button type="submit" class="w3-button w3-theme">
+                                <i class="fa fa-pencil"></i>
+                                Go to Login Page
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<th:block th:replace="base :: jslinks"></th:block>
+</body>
+</html>

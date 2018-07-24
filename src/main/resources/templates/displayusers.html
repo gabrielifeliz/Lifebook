@@ -1,41 +1,73 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<html lang="en" xmlns:th="www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org.thymeleaf-extras-springsecurity4">
 <head>
-    <meta charset="UTF-8">
-    <title>Show users</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <title>Users</title>
+    <th:block th:replace="base :: headstuff"></th:block>
 </head>
-<body>
-<h2>List Of Users</h2>
+<body class="w3-theme-l5">
 
-<table class="table table-dark">
-    <thead>
-    <tr>
-        <th scope="col">User Name</th>
-        <th scope="col">is Suspended</th>
-        <th scope="col">Action</th>
+<!-- Navbar -->
+<nav th:replace="base :: navbar"></nav>
 
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="userslist: ${users}">
+<!-- Page Container -->
+<div class="w3-container w3-content" style="max-width:1400px;margin-top:80px">
+    <!-- The Grid -->
+    <div class="w3-row">
 
-        <td  th:text="${userslist.username}"></td>
-        
-        <td th:text="${userslist.suspended}"></td>
-        <td><div th:if="${!userslist.suspended}">
-         <a th:href="@{/admin/suspend/{id}(id=${userslist.id})}">Suspend</a>
-		</div>
-		<div th:if="${userslist.suspended}">
-         <a th:href="@{/admin/unsuspend/{id}(id=${userslist.id})}">unsuspend</a>
-		</div>
-		 </td>
-      
-    </tr>
-    </tbody>
-</table>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+        <!-- Middle Column -->
+        <div class="w3-col m7">
+
+            <div class="w3-container w3-card w3-white w3-round w3-margin"><br>
+                <h1 class="w3-center">USERS</h1><br>
+                <hr class="w3-clear">
+                <div class="w3-row-padding" style="margin:0 -16px">
+                </div>
+            </div>
+            <a th:href="@{/admin/}">
+                <button type="button" class="w3-button w3-theme-d1 w3-margin-bottom">
+                    Go Back to Main Page
+                </button>
+            </a><br/><br/>
+            <div th:each="userslist: ${users}">
+                <div class="w3-container w3-card w3-white w3-round w3-margin" th:if="${currentUser.username}!=${userslist.username}" >
+                    <br>
+                    <!--<img src="/w3images/avatar2.png" alt="Avatar" class="w3-left w3-circle w3-margin-right" style="width:60px">-->
+                    <h3 th:text="'Full Name: ' + ${userslist.firstName} + ' ' + ${userslist.lastName}"></h3><br>
+                    <h4 th:text="'Username: ' + ${userslist.username}"></h4><br>
+                    <h4 th:text="'Email: ' + ${userslist.email}"></h4><br>
+                    <h4 th:text="'Active? ' + ${userslist.enabled}"></h4><br>
+                    <hr class="w3-clear">
+                    <div class="w3-row-padding" style="margin:0 -16px" th:each="eachRole:${userslist.roles}">
+                        <div th:if="${userslist.enabled}">
+                            <a th:href="@{/admin/availability/{id}(id=${userslist.id})}">
+                                <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom">
+                                    <i class="fa fa-toggle-off"></i>
+                                    SUSPEND
+                                </button>
+                            </a>
+                        </div>
+                        <div th:if="${!userslist.enabled}">
+                            <a th:href="@{/admin/availability/{id}(id=${userslist.id})}">
+                                <button type="button" class="w3-button w3-theme-d2 w3-margin-bottom">
+                                    <i class="fa fa-toggle-on"></i>
+                                    REINSTATE
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- End Middle Column -->
+        </div>
+        <!-- End Grid -->
+    </div>
+
+    <!-- End Page Container -->
+</div>
+<br>
+
+<th:block th:replace="base :: jslinks"></th:block>
 </body>
 </html>

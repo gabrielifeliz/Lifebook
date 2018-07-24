@@ -1,3 +1,4 @@
+/*
 package com.lifebook.Service;
 
 import com.lifebook.Model.AppRole;
@@ -68,3 +69,4 @@ public class DataLoader implements CommandLineRunner {
         users.save (u);
     }
 }
+*/
