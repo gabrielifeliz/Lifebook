@@ -23,8 +23,7 @@
                     <hr>
                     <p th:inline="text"><i class="fa fa-user fa-fw w3-margin-right w3-text-theme"></i> [[${currentuser.firstName}]] [[${currentuser.lastName}]]</p>
                     <p th:inline="text"><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> [[${currentuser.email}]]</p>
-                    <p th:inline="text"><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Following:  <a th:href="@{/users/following}">[[${currentuser.noOfFriends}]]</a></p>
-
+                    <p th:inline="text"><i class="fa fa-pencil fa-fw w3-margin-right w3-text-theme"></i> Following: <a th:href="@{/users/following}">[[${currentuser.noOfFriends}]]</a></p>
                 </div>
             </div>
             <br>
