@@ -13,7 +13,8 @@ public class UserPost {
     private String subject;
     private String content;
     private String imageUrl;
-    private String  dateOfPost;
+    private String dateOfPost;
+    private String filter;
 
     public String getDateOfPost() {
         return dateOfPost;
@@ -62,15 +63,19 @@ public class UserPost {
         this.imageUrl = imageUrl;
     }
 
-
-
-
-
     public AppUser getCreator() {
         return creator;
     }
 
     public void setCreator(AppUser creator) {
         this.creator = creator;
+    }
+
+    public String getFilter() {
+        return filter;
+    }
+
+    public void setFilter(String filter) {
+        this.filter = filter;
     }
 }
